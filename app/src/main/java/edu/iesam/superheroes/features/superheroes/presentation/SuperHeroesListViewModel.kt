@@ -1,4 +1,7 @@
 package edu.iesam.superheroes.features.superheroes.presentation
 
-class SuperHeroesListViewModel {
-}
+import edu.iesam.superheroes.features.superheroes.domain.GetSuperHeroeUseCase
+
+class SuperHeroesListViewModel (
+    private  val superHeroeUseCase: GetSuperHeroeUseCase
+)

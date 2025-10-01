@@ -4,8 +4,8 @@ import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
 
 class SuperHeroesApiRemoteDataSource {
 
-    fun getSuperHeroes(): Result<List<SuperHeroe>> {
-        return Result.success(listOf(SuperHeroe("")))
-    }
+//    fun getSuperHeroes(): Result<List<SuperHeroe>> {
+//        return Result.success(listOf(SuperHeroe("")))
+//    }
 
 }
