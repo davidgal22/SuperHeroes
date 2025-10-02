@@ -32,6 +32,8 @@ class SuperHeroesListActivity : AppCompatActivity() {
         val result = viewModel.loadSuperHeroes()
         val superHeroes = result.getOrNull()
 
-        Log.d ("@dev", "Superheroes encontrados: ${superHeroes?.size}")
+        superHeroes?.forEach { superhero ->
+            Log.d("@dev", "ID: ${superhero.id}, Nombre: ${superhero.name}, Slug: ${superhero.slug}")
+        }
     }
 }
