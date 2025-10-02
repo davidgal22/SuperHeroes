@@ -1,4 +1,6 @@
 package edu.iesam.superheroes.features.superheroes.domain
 
-class ErrorApp {
+sealed class ErrorApp : Throwable() {
+    object networkError : ErrorApp()
+    object serverError : ErrorApp()
 }
