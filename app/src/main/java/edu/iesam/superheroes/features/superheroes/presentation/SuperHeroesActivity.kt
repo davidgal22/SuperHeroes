@@ -13,7 +13,7 @@ import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.GetSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
 
-class SuperHeroesListActivity : AppCompatActivity() {
+class SuperHeroesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,7 +29,7 @@ class SuperHeroesListActivity : AppCompatActivity() {
         val api = SuperHeroesApiRemoteDataSource()
         val repository = SuperHeroeDataRepository(api)
         val useCase = GetSuperHeroeUseCase(repository)
-        val viewModel = SuperHeroesListViewModel(useCase)
+        val viewModel = SuperHeroesViewModel(useCase)
         val result = viewModel.loadSuperHeroes()
 
 
