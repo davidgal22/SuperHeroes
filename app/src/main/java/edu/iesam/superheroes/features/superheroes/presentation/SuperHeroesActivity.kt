@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import edu.iesam.superheroes.R
 import edu.iesam.superheroes.core.api.ApiClient
 import edu.iesam.superheroes.features.superheroes.data.SuperHeroeDataRepository
@@ -13,6 +14,7 @@ import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApi
 import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.GetSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class SuperHeroesActivity : AppCompatActivity() {
@@ -51,9 +53,12 @@ class SuperHeroesActivity : AppCompatActivity() {
 
     private fun loadSuperHeroes() {
         val apiRemote = SuperHeroesApiRemoteDataSource(ApiClient())
-        thread {
-            val models = apiRemote.getSuperHeroes()
-            models
+        lifecycleScope.launch {  // ← Usar lifecycleScope en vez de thread
+            val result = apiRemote.getSuperHeroes()
+            result.fold(
+                { superheroes -> loadSuccess(superheroes) },
+                { error -> loadFailure(error as ErrorApp) }
+            )
         }
     }
 

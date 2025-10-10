@@ -27,7 +27,7 @@ class SuperHeroesApiRemoteDataSource(private val apiClient: ApiClient) {
                 //   it.toModel()
                 //})
             } else {
-                Result.failure(ErrorApp.ServerError)
+                return@withContext Result.failure(ErrorApp.ServerError)
 
             }
         }
