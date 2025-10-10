@@ -8,12 +8,12 @@ class ApiClient {
 
     private val Base_URL = "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/"
 
-    private val retrofit  = Retrofit.Builder()
-    .baseUrl(Base_URL)
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(Base_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-    fun <T> createService(typeClass:Class<T>) : T{
+    fun <T> createService(typeClass: Class<T>): T {
         return retrofit.create(typeClass)
 
     }

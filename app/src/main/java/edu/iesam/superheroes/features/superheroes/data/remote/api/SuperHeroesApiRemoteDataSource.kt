@@ -1,22 +1,37 @@
 package edu.iesam.superheroes.features.superheroes.data.remote.api
 
 import edu.iesam.superheroes.core.api.ApiClient
+import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class SuperHeroesApiRemoteDataSource (private val apiClient: ApiClient){
 
-    fun getSuperHeroes(): Result<List<SuperHeroe>> {
-       // return Result.failure(ErrorApp.ServerError)
+class SuperHeroesApiRemoteDataSource(private val apiClient: ApiClient) {
+
+    suspend fun getSuperHeroes(): Result<List<SuperHeroe>> {
+        // return Result.failure(ErrorApp.ServerError)
         //entran ApiModels
         //salen Models
-       val apiService = apiClient.createService(SuperHeroApiService::class.java)
-        apiService.findAll()
-            return Result.success(
-                listOf(
-                    SuperHeroe("1", "Spider-Man", "spider-man", "url_imagen"),
-                    SuperHeroe("2", "Iron Man", "iron-man", "url_imagen")
-                )
-            )
+        return withContext(Dispatchers.IO) {
+            val apiService = apiClient.createService(SuperHeroApiService::class.java)
+            val resultSuperHeroe = apiService.findAll()
+            if (resultSuperHeroe.isSuccessful && resultSuperHeroe.errorBody() == null) {
+                val listSuperHoerApiModel: List<SuperHeroApiModel> = resultSuperHeroe.body()!!
+                val listSuperHero = listSuperHoerApiModel.map { superHeroApiModel ->
+                    superHeroApiModel.toModel()
+                }
+                return@withContext Result.success(listSuperHero)
+
+                // return Result.success(resultSuperHeroe.body()!!.map {
+                //   it.toModel()
+                //})
+            } else {
+                Result.failure(ErrorApp.ServerError)
+
+            }
+        }
+
 
     }
 

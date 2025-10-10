@@ -7,11 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import edu.iesam.superheroes.R
+import edu.iesam.superheroes.core.api.ApiClient
 import edu.iesam.superheroes.features.superheroes.data.SuperHeroeDataRepository
 import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApiRemoteDataSource
 import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.GetSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
+import kotlin.concurrent.thread
 
 class SuperHeroesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,26 +25,38 @@ class SuperHeroesActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
+        //llamada
+        loadSuperHeroes()
         //conexion
+        /*
+                val api = SuperHeroesApiRemoteDataSource()
+                val repository = SuperHeroeDataRepository(api)
+                val useCase = GetSuperHeroeUseCase(repository)
+                val viewModel = SuperHeroesViewModel(useCase)
+                val result = viewModel.loadSuperHeroes()
 
-        val api = SuperHeroesApiRemoteDataSource()
-        val repository = SuperHeroeDataRepository(api)
-        val useCase = GetSuperHeroeUseCase(repository)
-        val viewModel = SuperHeroesViewModel(useCase)
-        val result = viewModel.loadSuperHeroes()
+
+                result.fold(
+                    {superheroes ->
+                        loadSuccess(superheroes)
+                    },
+                    {error->
+
+                        loadFailure(error as ErrorApp)}
+                )
 
 
-        result.fold(
-            {superheroes ->
-                loadSuccess(superheroes)
-            },
-            {error->
-
-                loadFailure(error as ErrorApp)}
-        )
-
+         */
     }
+
+    private fun loadSuperHeroes() {
+        val apiRemote = SuperHeroesApiRemoteDataSource(ApiClient())
+        thread {
+            val models = apiRemote.getSuperHeroes()
+            models
+        }
+    }
+
     private fun loadSuccess(superheroes: List<SuperHeroe>) {
         superheroes.forEach { superhero ->
             Log.d("@dev", "ID: ${superhero.id}, Nombre: ${superhero.name}")

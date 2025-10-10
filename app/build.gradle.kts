@@ -1,5 +1,3 @@
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -47,7 +45,10 @@ dependencies {
 
     //retrofit
     implementation(libs.retrofit)
-    implementation( libs.converter.gson)
+    implementation(libs.converter.gson)
+
+    //Coroutines
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
 
     testImplementation(libs.junit)
