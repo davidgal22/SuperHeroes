@@ -6,10 +6,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import edu.iesam.superheroes.R
 import edu.iesam.superheroes.core.api.ApiClient
-import edu.iesam.superheroes.features.superheroes.data.SuperHeroeDataRepository
+import edu.iesam.superheroes.features.superheroes.data.SuperHeroDataRepository
+
 import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApiRemoteDataSource
 import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.GetSuperHeroeUseCase
@@ -18,6 +20,14 @@ import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class SuperHeroesActivity : AppCompatActivity() {
+    private val viewModel = SuperHeroesViewModel(
+        GetSuperHeroeUseCase(
+            SuperHeroDataRepository(
+                SuperHeroesApiRemoteDataSource(ApiClient())
+            )
+        )
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,51 +37,37 @@ class SuperHeroesActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        //llamada
-        loadSuperHeroes()
-        //conexion
-        /*
-                val api = SuperHeroesApiRemoteDataSource()
-                val repository = SuperHeroeDataRepository(api)
-                val useCase = GetSuperHeroeUseCase(repository)
-                val viewModel = SuperHeroesViewModel(useCase)
-                val result = viewModel.loadSuperHeroes()
 
 
-                result.fold(
-                    {superheroes ->
-                        loadSuccess(superheroes)
-                    },
-                    {error->
+        setupObserver()
 
-                        loadFailure(error as ErrorApp)}
-                )
-
-
-         */
+viewModel.loadSuperHeroes()
     }
 
-    private fun loadSuperHeroes() {
-        val apiRemote = SuperHeroesApiRemoteDataSource(ApiClient())
-        lifecycleScope.launch {  // ← Usar lifecycleScope en vez de thread
-            val result = apiRemote.getSuperHeroes()
-            result.fold(
-                { superheroes -> loadSuccess(superheroes) },
-                { error -> loadFailure(error as ErrorApp) }
-            )
-        }
-    }
+    private fun setupObserver() {
+        val observer = Observer<SuperHeroesViewModel.UiState> { uiState ->
+            if (uiState.isLoading) {
+                //Muestro un spinner
+            } else {
+                //oculto spinner
+            }
+            // El viewmodel me pas el uiState
+            if (uiState.error != null) {
 
-    private fun loadSuccess(superheroes: List<SuperHeroe>) {
-        superheroes.forEach { superhero ->
-            Log.d("@dev", "ID: ${superhero.id}, Nombre: ${superhero.name}")
-        }
-    }
+            }else{
 
-    private fun loadFailure(errorApp: ErrorApp) {
-        when (errorApp) {
-            is ErrorApp.NetworkError -> Log.e("@dev", "Error: Sin conexión a internet")
-            is ErrorApp.ServerError -> Log.e("@dev", "Error: Servidor no disponible")
+            }
+            //uistate.error?.let{
+                //visualizar pantalla de error
+            //} ?:{
+            //ocultar error
+            //}
+
+            uiState.superheroes?.let{ superheroes ->
+                superheroes
+            }
         }
+        viewModel.uiState.observe(this, observer)
+
     }
 }

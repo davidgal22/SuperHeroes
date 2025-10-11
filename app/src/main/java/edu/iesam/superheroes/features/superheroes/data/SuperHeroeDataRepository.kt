@@ -4,10 +4,10 @@ import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApi
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroeRepository
 
-class SuperHeroeDataRepository(
-    private val apiRemoteDataSource: SuperHeroesApiRemoteDataSource
-) : SuperHeroeRepository {
-    override suspend fun get(): Result<List<SuperHeroe>> {  // ← Añadir suspend
-        return apiRemoteDataSource.getSuperHeroes()
+class SuperHeroDataRepository(private val remote: SuperHeroesApiRemoteDataSource) :
+    SuperHeroeRepository{
+
+    override suspend fun findAll(): Result<List<SuperHeroe>> {
+        return remote.getSuperHeroes()
     }
 }
